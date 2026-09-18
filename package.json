@@ -4,7 +4,7 @@
   "description": "AgriConnect Precision Agritech Market Linkage Platform",
   "main": "backend/dist/server.js",
   "scripts": {
-    "build": "cd backend && npm install && npx prisma generate",
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install && npx prisma generate && npm run build",
     "start": "node backend/dist/server.js"
   },
   "keywords": ["agritech", "sih", "market-linkage"],
