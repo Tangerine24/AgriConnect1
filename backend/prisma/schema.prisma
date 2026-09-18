@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  phone     String   @unique
+  email     String?  @unique
+  googleId  String?  @unique
+  role      String   // "farmer" | "buyer" | "admin"
+  createdAt DateTime @default(now())
+  
+  farmerProfile FarmerProfile?
+  buyerProfile  BuyerProfile?
+  adminProfile  AdminProfile?
+}
+
+model AdminProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  name        String
+  department  String   @default("Agricultural Marketing Operations")
+  accessLevel String   @default("SUPER_ADMIN") // "SUPER_ADMIN" | "REGIONAL_ADMIN"
+}
+
+model FarmerProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  name            String
+  location        String
+  storageCapacity Float?
+  transportAccess Boolean  @default(false)
+  
+  listings ProduceListing[]
+}
+
+model BuyerProfile {
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id])
+  name                 String
+  companyName          String?
+  verificationStatus   String   @default("UNVERIFIED") // "UNVERIFIED" | "VERIFIED"
+  reliabilityScore     Float    @default(0.0) // 0 to 100
+  completedTransactions Int     @default(0)
+  
+  offers Offer[]
+}
+
+model Commodity {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  category  String
+  
+  prices    MarketPrice[]
+  listings  ProduceListing[]
+}
+
+model Market {
+  id        String   @id @default(uuid())
+  name      String
+  state     String
+  district  String
+  distance  Float    // Distance from farmer's assumed central location (for prototype)
+  
+  prices    MarketPrice[]
+}
+
+model MarketPrice {
+  id          String   @id @default(uuid())
+  marketId    String
+  market      Market   @relation(fields: [marketId], references: [id])
+  commodityId String
+  commodity   Commodity @relation(fields: [commodityId], references: [id])
+  
+  minPrice    Float
+  maxPrice    Float
+  modalPrice  Float
+  date        DateTime @default(now())
+}
+
+model ProduceListing {
+  id              String   @id @default(uuid())
+  farmerId        String
+  farmer          FarmerProfile @relation(fields: [farmerId], references: [id])
+  commodityId     String
+  commodity       Commodity @relation(fields: [commodityId], references: [id])
+  
+  quantity        Float    // In quintals
+  expectedPrice   Float
+  location        String
+  availableDate   DateTime
+  status          String   @default("ACTIVE") // ACTIVE, SOLD
+  createdAt       DateTime @default(now())
+  
+  offers Offer[]
+}
+
+model Offer {
+  id              String   @id @default(uuid())
+  listingId       String
+  listing         ProduceListing @relation(fields: [listingId], references: [id])
+  buyerId         String
+  buyer           BuyerProfile @relation(fields: [buyerId], references: [id])
+  
+  offerPrice      Float
+  quantity        Float
+  status          String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  createdAt       DateTime @default(now())
+}

@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import "@fontsource/inter";
+@import "@fontsource/manrope";
+
+@theme {
+  --color-primary: #176B3A;
+  --color-primary-dark: #0E4D29;
+  --color-secondary: #2E8B57;
+  --color-accent: #F4B942;
+  --color-background: #F6F9F5;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #14221A;
+  --color-text-secondary: #647067;
+  --color-success: #238636;
+  --color-warning: #D99A00;
+  --color-danger: #C0392B;
+  --color-info: #2563EB;
+  
+  --font-sans: "Inter", sans-serif;
+  --font-heading: "Manrope", sans-serif;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
